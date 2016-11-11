@@ -1,0 +1,90 @@
+@import url('https://fonts.googleapis.com/css?family=Titillium+Web:400,700');
+
+/* Globals */
+html, body, aside, figure, h1, h4, input, ul, li, header, main, nav, footer, p {
+  border: 0;
+  margin: 0;
+  padding: 0;
+
+  font: inherit;
+  background-color: transparent;
+}
+
+body {
+  font-family: 'Titillium Web', sans-serif;
+  min-height: 100vh;
+  max-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  margin: 10px;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  height: 100%;
+}
+
+main > div {
+  display: flex;
+  flex-direction: column;
+}
+
+ul {
+  list-style: none;
+}
+
+/* Typography */
+
+h1 {
+  font-size: 12vmin;
+  font-weight: 700;
+  text-align: center;
+}
+
+h4 {
+  font-size: 3vmin;
+  font-weight: 700;
+  font-style: italic;
+}
+
+/* Components */
+
+aside, footer {
+  border-top: 6px double black;
+  border-bottom: 6px double black;
+}
+
+aside {
+  text-align: center;
+}
+
+aside ul li {
+  display: inline-block;
+  margin: 0 20px;
+}
+
+section {
+  flex: 1;
+  border: 2px solid black;
+  margin: 20px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  max-height: 400px;
+}
+
+footer {
+  font-size: 4vmin;
+}
+
+footer ul {
+  display: flex;
+  justify-content: space-between;
+}
+
+footer ul li {
+  display: inline-block;
+}
