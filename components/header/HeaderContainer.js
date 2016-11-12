@@ -1,9 +1,17 @@
 import { connect } from 'react-redux';
 import Header from './Header';
 
-const mapStateToProps = state => ({});
+import { updatePlayer, updateBaseFrequency } from '../../actions/PlayerActions';
+// import { adjustToBaseFrequency } from '../../util/PlayerUtil';
 
-const mapDispatchToProps = dispatch => ({});
+const mapStateToProps = state => ({
+  player: state.player
+});
+
+const mapDispatchToProps = dispatch => ({
+  updatePlayer: (parameter, value) => dispatch(updatePlayer(parameter, value)),
+  updateBaseFrequency: value => dispatch(updateBaseFrequency(value))
+});
 
 export default connect(
   mapStateToProps,
