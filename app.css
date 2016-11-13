@@ -78,6 +78,7 @@ section {
 
 footer {
   font-size: 4vmin;
+  text-align: center;
 }
 
 footer ul {
@@ -87,8 +88,4 @@ footer ul {
 
 footer ul li {
   display: inline-block;
-}
-
-footer ul li button {
-  margin: 0 auto;
 }

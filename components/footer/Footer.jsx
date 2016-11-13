@@ -21,10 +21,7 @@ class Footer extends React.Component {
     let template;
     if (!this.props.weather && !this.state.loading) {
       template = (
-        // <button onClick={this.getWeather()}>Get Temperature & Humidity</button>
-        <ul>
-          <li><button onClick={this.getWeather()}>Get Temperature & Humidity</button></li>
-        </ul>
+        <button onClick={this.getWeather()}>Get Temperature & Humidity</button>
       );
     } else if (!this.props.weather && this.state.loading) {
       template = (
