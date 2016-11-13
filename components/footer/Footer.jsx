@@ -4,18 +4,31 @@ import { convertTemp } from '../../util/WeatherUtil';
 class Footer extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      loading: false
+    };
     this.convertTemp = convertTemp;
   }
 
-  componentDidMount() {
-    this.props.getWeather();
+  getWeather() {
+    return () => {
+      this.props.getWeather();
+      this.setState({loading: true});
+    };
   }
 
   render() {
     let template;
-    if (!this.props.weather) {
+    if (!this.props.weather && !this.state.loading) {
       template = (
-        <ul style={{visibility: 'hidden'}}>
+        // <button onClick={this.getWeather()}>Get Temperature & Humidity</button>
+        <ul>
+          <li><button onClick={this.getWeather()}>Get Temperature & Humidity</button></li>
+        </ul>
+      );
+    } else if (!this.props.weather && this.state.loading) {
+      template = (
+        <ul>
           <li>loading weather...</li>
         </ul>
       );

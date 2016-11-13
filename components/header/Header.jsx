@@ -8,6 +8,10 @@ class Header extends React.Component {
   toggle(parameter) {
     return () => {
       const newValue = !this.props.player[parameter];
+      if (parameter === 'drone' && this.props.player.isPlaying) {
+        this.props.player.pitch.stop();
+        this.props.updatePlayer('isPlaying', false);
+      }
       this.props.updatePlayer(parameter, newValue);
     };
   }
