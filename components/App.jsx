@@ -4,6 +4,9 @@ import HeaderContainer from './header/HeaderContainer';
 import PitchPipeContainer from './pitch-pipe/PitchPipeContainer';
 import FooterContainer from './footer/FooterContainer';
 
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -12,11 +15,13 @@ class App extends React.Component {
   render() {
     return (
       <Provider store={this.props.store}>
-        <div>
-          <HeaderContainer />
-          <PitchPipeContainer />
-          <FooterContainer />
-        </div>
+        <MuiThemeProvider>
+          <div>
+            <HeaderContainer />
+            <PitchPipeContainer />
+            <FooterContainer />
+          </div>
+        </MuiThemeProvider>
       </Provider>
     );
   }

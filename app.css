@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css?family=Titillium+Web:400,700');
 
 /* Globals */
-html, body, aside, figure, h1, h4, input, ul, li, header, main, nav, footer, p {
+html, body, aside, figure, h1, h4, input, ul, li, header, main, nav, footer, p, input, label {
   border: 0;
   margin: 0;
   padding: 0;
@@ -16,6 +16,7 @@ body {
   max-height: 100vh;
   display: flex;
   flex-direction: column;
+  background-color: #00BCD4;
 }
 
 main {
@@ -43,8 +44,8 @@ h1 {
   text-align: center;
 }
 
-h4 {
-  font-size: 3vmin;
+h3 {
+  font-size: 4vmin;
   font-weight: 700;
   font-style: italic;
 }
@@ -52,17 +53,52 @@ h4 {
 /* Components */
 
 aside, footer {
-  border-top: 6px double black;
-  border-bottom: 6px double black;
+  /*border-top: 6px double black;
+  border-bottom: 6px double black;*/
 }
 
 aside {
-  text-align: center;
+  color: white;
 }
 
-aside ul li {
-  display: inline-block;
-  margin: 0 20px;
+aside .options {
+  text-align: center;
+  transition: rotateX 600ms cubic-bezier(0.4, 0, 0, 1);
+}
+
+aside .options > button {
+  vertical-align: sub;
+}
+
+aside nav {
+  max-height: 0;
+  overflow-x: hidden;
+  display: flex;
+  flex-wrap: row-wrap;
+  justify-content: space-around;
+  align-items: center;
+  -webkit-transition: max-height 600ms cubic-bezier(0.4, 0, 0, 1);
+  transition: max-height 600ms cubic-bezier(0.4, 0, 0, 1);
+}
+
+aside nav > div {
+  width: inherit !important;
+}
+
+aside label {
+  color: white !important;
+}
+
+aside nav.open {
+  max-height: 300px;
+}
+
+aside svg {
+  transform: rotateX(0deg) !important;
+}
+
+aside svg.open {
+  transform: rotateX(540deg) !important;
 }
 
 section {
@@ -77,7 +113,6 @@ section {
 }
 
 footer {
-  font-size: 4vmin;
   text-align: center;
 }
 

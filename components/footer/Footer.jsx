@@ -1,5 +1,6 @@
 import React from 'react'; // eslint-disable-line no-unused-vars
 import { convertTemp } from '../../util/WeatherUtil';
+import RaisedButton from 'material-ui/RaisedButton';
 
 class Footer extends React.Component {
   constructor(props) {
@@ -21,13 +22,11 @@ class Footer extends React.Component {
     let template;
     if (!this.props.weather && !this.state.loading) {
       template = (
-        <button onClick={this.getWeather()}>Get Temperature & Humidity</button>
+        <RaisedButton label="Get Temperature & Humidity" onTouchTap={this.getWeather()}/>
       );
     } else if (!this.props.weather && this.state.loading) {
       template = (
-        <ul>
-          <li>loading weather...</li>
-        </ul>
+        <p>loading weather...</p>
       );
     } else {
       template = (

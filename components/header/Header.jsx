@@ -1,8 +1,21 @@
 import React from 'react';
+import Checkbox from 'material-ui/Checkbox';
+import TextField from 'material-ui/TextField';
+import IconButton from 'material-ui/IconButton';
+import ExpandLess from 'material-ui/svg-icons/navigation/expand-less';
 
 class Header extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      optionsOpen: true
+    };
+  }
+
+  toggleOptions() {
+    return () => {
+      this.setState({optionsOpen: !this.state.optionsOpen});
+    };
   }
 
   toggle(parameter) {
@@ -32,30 +45,31 @@ class Header extends React.Component {
   }
 
   render() {
+    const styles = {
+      checkbox: {
+        fill: 'white'
+      }
+    };
+    const openClass = this.state.optionsOpen ? 'open' : '';
     return (
       <header>
         <h1>The Pitch Pipe</h1>
         <aside>
-          <h4>Options</h4>
-          <nav>
-            <ul>
-              <li>
-                <input type="checkbox" id="drone" onClick={this.toggle('drone')}/>
-                <label htmlFor="drone">
-                  Drone
-                </label>
-              </li>
-              <li>
-                <input type="checkbox" id="hertz" onClick={this.toggle('hertz')}/>
-                <label htmlFor="hertz">
-                  Hertz
-                </label>
-              </li>
-              <li>
-                <label htmlFor="baseFrequency">A = </label>
-                <input type="number" id="baseFrequency" value={this.props.player.baseFrequency} onChange={this.baseFrequencyChange()} />
-              </li>
-            </ul>
+          <div className="options">
+            <h3 style={{display: 'inline'}}>Options</h3>
+            <IconButton onTouchTap={this.toggleOptions()}>
+              <ExpandLess className={openClass} color="white"/>
+            </IconButton>
+          </div>
+          <nav className={openClass}>
+            <Checkbox label="Drone"
+              iconStyle={styles.checkbox}
+              onTouchTap={this.toggle('drone')}/>
+            <Checkbox label="Hertz"
+              iconStyle={styles.checkbox}
+              inputStyle={styles.checkboxLabel}
+              onTouchTap={this.toggle('hertz')}/>
+            <TextField value={this.props.player.baseFrequency} onChange={this.baseFrequencyChange()}/>
           </nav>
         </aside>
       </header>
