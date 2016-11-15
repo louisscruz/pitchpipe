@@ -32,6 +32,18 @@ main > div {
   flex-direction: column;
 }
 
+main .circle {
+  height: 100%;
+  background-color: black;
+  border-radius: 50%;
+}
+
+main .circle:before {
+  content: '';
+  display: block;
+  padding-top: 100%;
+}
+
 ul {
   list-style: none;
 }
@@ -114,6 +126,7 @@ section {
 
 footer {
   text-align: center;
+  height: 36px;
 }
 
 footer ul {

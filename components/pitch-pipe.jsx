@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 
 class PitchPipe extends React.Component {
 
@@ -19,7 +19,7 @@ class PitchPipe extends React.Component {
     this.state = {
       size: 100,
       pixelRatio: 1
-    }
+    };
   }
 
   setPixelRatio(cb) {
@@ -41,11 +41,11 @@ class PitchPipe extends React.Component {
     this.setState({size: size}, () => {
       let canvas = this.refs.canvas;
       const ctx = canvas.getContext('2d');
-      canvas.width = size// * this.state.pixelRatio;
-      canvas.height = size// * this.state.pixelRatio;
+      canvas.width = size;// * this.state.pixelRatio;
+      canvas.height = size;// * this.state.pixelRatio;
       canvas.style.width = `${size}px`;
       canvas.style.height = `${size}px`;
-      // ctx.fillRect(0,0, this.state.size, this.state.size);
+      ctx.fillRect(0,0, this.state.size, this.state.size);
       // ctx.beginPath();
       // ctx.arc(size / 2, size / 2, size / 2, 0, 2*Math.PI);
       // ctx.stroke();
