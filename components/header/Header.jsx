@@ -3,6 +3,11 @@ import Checkbox from 'material-ui/Checkbox';
 import TextField from 'material-ui/TextField';
 import IconButton from 'material-ui/IconButton';
 import ExpandLess from 'material-ui/svg-icons/navigation/expand-less';
+import Add from 'material-ui/svg-icons/content/add';
+import Remove from 'material-ui/svg-icons/content/remove';
+
+let timeoutId = null;
+let intervalId = null;
 
 class Header extends React.Component {
   constructor(props) {
@@ -44,10 +49,36 @@ class Header extends React.Component {
     };
   }
 
+  baseFrequencyDown(polarity = 1) {
+    return () => {
+      timeoutId = setTimeout(() => {
+        intervalId = setInterval(() => {
+          const newValue = this.props.player.baseFrequency + polarity;
+          this.props.updateBaseFrequency(newValue);
+        }, 30);
+      }, 300);
+    };
+  }
+
+  baseFrequencyUp(polarity = 1) {
+    return () => {
+      const newValue = this.props.player.baseFrequency + polarity;
+      this.props.updateBaseFrequency(newValue);
+      clearTimeout(timeoutId);
+      clearInterval(intervalId);
+      intervalId = null;
+    };
+  }
+
   render() {
     const styles = {
       checkbox: {
         fill: 'white'
+      },
+      input: {
+        color: 'white',
+        width: '40px',
+        textAlign: 'center'
       }
     };
     const openClass = this.state.optionsOpen ? 'open' : '';
@@ -69,7 +100,21 @@ class Header extends React.Component {
               iconStyle={styles.checkbox}
               inputStyle={styles.checkboxLabel}
               onTouchTap={this.toggle('hertz')}/>
-            <TextField value={this.props.player.baseFrequency} onChange={this.baseFrequencyChange()}/>
+            <IconButton
+              onMouseDown={this.baseFrequencyDown(-1)}
+              onMouseUp={this.baseFrequencyUp(-1)}>
+              <Remove color="white"/>
+            </IconButton>
+            <TextField
+              floatingLabelText="A ="
+              value={this.props.player.baseFrequency}
+              onChange={this.baseFrequencyChange()}
+              inputStyle={styles.input}/>
+            <IconButton
+              onMouseDown={this.baseFrequencyDown()}
+              onMouseUp={this.baseFrequencyUp()}>
+              <Add color="white"/>
+            </IconButton>
           </nav>
         </aside>
       </header>
