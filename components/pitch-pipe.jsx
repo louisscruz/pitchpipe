@@ -1,17 +1,21 @@
 import React from 'react';
+import ResizeSensor from 'css-element-queries/src/ResizeSensor';
 
 class PitchPipe extends React.Component {
 
   componentDidMount() {
     // set pixel ratio
+    var element = document.getElementById('myElement');
+    new ResizeSensor(element, function() {
+      console.log('Changed to ' + element.clientWidth);
+    });
     this.setPixelRatio(function() {
       this.updateCanvas();
-      const section = this.refs.section;
-      window.addEventListener('resize', () => {
-        this.updateCanvas();
-      });
+      // const section = this.refs.section;
+      // window.addEventListener('resize', () => {
+      //   this.updateCanvas();
+      // });
     });
-
   }
 
   constructor(props) {
@@ -55,10 +59,10 @@ class PitchPipe extends React.Component {
 
   render () {
     return (
-      <section ref="section">
+      <section ref="section" id="myElement">
         <canvas ref="canvas" width={this.state.size / this.state.pixelRatio} height={this.state.size / this.state.pixelRatio} />
       </section>
-    )
+    );
   }
 }
 

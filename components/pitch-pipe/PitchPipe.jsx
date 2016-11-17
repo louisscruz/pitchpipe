@@ -1,4 +1,6 @@
 import React from 'react';
+import ResizeSensor from 'css-element-queries/src/ResizeSensor';
+import ElementQueries from 'css-element-queries/src/ElementQueries';
 import { frequencyToLetter } from '../../util/PlayerUtil';
 
 class PitchPipe extends React.Component {
@@ -12,10 +14,10 @@ class PitchPipe extends React.Component {
 
   componentDidMount() {
     // set pixel ratio
+    ElementQueries.init();
     this.setPixelRatio(function() {
       this.updateCanvas();
-      // const section = this.refs.section;
-      window.addEventListener('resize', () => {
+      new ResizeSensor(this.refs.canvasSection, () => {
         this.updateCanvas();
       });
     });
@@ -67,23 +69,55 @@ class PitchPipe extends React.Component {
   }
 
   updateCanvas() {
-    const height = this.refs.section.offsetHeight;
-    const width = this.refs.section.offsetWidth;
+    const height = this.refs.canvasSection.offsetHeight;
+    const width = this.refs.canvasSection.offsetWidth;
     const size = height <= width ? height * this.state.pixelRatio : width * this.state.pixelRatio;
     this.setState({size: size}, () => {
-      let canvas = this.refs.canvas;
-      const ctx = canvas.getContext('2d');
-      canvas.width = size;// * this.state.pixelRatio;
-      canvas.height = size;// * this.state.pixelRatio;
-      canvas.style.width = `${size / this.state.pixelRatio}px`;
-      canvas.style.height = `${size / this.state.pixelRatio}px`;
-      ctx.beginPath();
-      ctx.arc(size / 2, size / 2, size / 2, 0, 2*Math.PI);
-      ctx.fillStyle = 'black';
-      ctx.fill();
-      ctx.stroke();
-      ctx.setTransform(this.state.pixelRatio, 0, 0, this.state.pixelRatio, 0, 0);
+      this.renderCanvas(size);
     });
+  }
+
+  renderCanvas(size) {
+    let canvas = this.refs.canvas;
+    const ctx = canvas.getContext('2d');
+    canvas.width = size;// * this.state.pixelRatio;
+    canvas.height = size;// * this.state.pixelRatio;
+    canvas.style.width = `${size / this.state.pixelRatio}px`;
+    canvas.style.height = `${size / this.state.pixelRatio}px`;
+    this.createOuterCircle(ctx, size);
+    this.createInnerCircle(ctx, size);
+    ctx.stroke();
+    this.setCenterText(ctx, size, this.state.pixelRatio);
+    ctx.setTransform(this.state.pixelRatio, 0, 0, this.state.pixelRatio, 0, 0);
+  }
+
+  createOuterCircle(ctx, size) {
+    ctx.beginPath();
+    ctx.arc(size / 2, size / 2, size / 2, 0, 2*Math.PI);
+    ctx.fillStyle = 'black';
+    ctx.fill();
+  }
+
+  createInnerCircle(ctx, size) {
+    ctx.beginPath();
+    ctx.arc(size / 2, size / 2, size / 4, 0, 2*Math.PI);
+    ctx.fillStyle = 'red';
+    ctx.fill();
+  }
+
+  setCenterText(ctx, size, pixelRatio) {
+    const text = 'A';
+    const fontSize = `${size / 4}`;
+    ctx.fillStyle='white';
+    ctx.font=`${fontSize}px Titillium Web`;
+    const xOffset = ctx.measureText(text).width / 4;
+    const yOffset = fontSize;
+    ctx.fillText(text, (size / 2) - xOffset, (size / 2) + (yOffset / pixelRatio));
+  }
+
+  handleCanvasClick(e) {
+    console.log(e);
+    this.soundPitch();
   }
 
   render() {
@@ -97,9 +131,10 @@ class PitchPipe extends React.Component {
       );
     }
     return (
-      <main ref="section">
+      <main ref="canvasSection">
         <canvas
           ref="canvas"
+          onClick={this.handleCanvasClick.bind(this)}
           width={this.state.size / this.state.pixelRatio}
           height={this.state.size / this.state.pixelRatio} />
       </main>
