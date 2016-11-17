@@ -110,14 +110,21 @@ class PitchPipe extends React.Component {
     const fontSize = `${size / 4}`;
     ctx.fillStyle='white';
     ctx.font=`${fontSize}px Titillium Web`;
-    const xOffset = ctx.measureText(text).width / 4;
-    const yOffset = fontSize;
-    ctx.fillText(text, (size / 2) - xOffset, (size / 2) + (yOffset / pixelRatio));
+    const xOffset = ctx.measureText(text).width / 2.1;
+    const yOffset = fontSize / 3;
+    ctx.fillText(text, (size / 2) - xOffset, (size / 2) + yOffset);
   }
 
   handleCanvasClick(e) {
-    console.log(e);
-    this.soundPitch();
+    const center = e.target.width / 2;
+    const clickOffsetX = e.nativeEvent.offsetX;
+    const clickOffsetY = e.nativeEvent.offsetY;
+    const xFromCenter = Math.abs(center - clickOffsetX);
+    const yFromCenter = Math.abs(center - clickOffsetY);
+    const innerWidth = e.target.width / 4;
+    if (xFromCenter < innerWidth && yFromCenter < innerWidth) {
+      this.soundPitch();
+    }
   }
 
   render() {
