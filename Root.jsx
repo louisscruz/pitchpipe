@@ -5,12 +5,9 @@ import ReactDOM from 'react-dom';
 import configureStore from './store/Store';
 import App from './components/App';
 import injectTapEventPlugin from 'react-tap-event-plugin';
-import ElementQueries from 'css-element-queries/src/ElementQueries';
 
-// ElementQueries.listen();
 document.addEventListener('DOMContentLoaded', () => {
   injectTapEventPlugin();
-  console.log(ElementQueries);
   const store = configureStore();
   const root = document.getElementById('root');
   ReactDOM.render(<App store={store} />, root);
