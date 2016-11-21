@@ -1,19 +1,22 @@
 import React from 'react';
+import { red400, red700 } from 'material-ui/styles/colors';
 import ResizeSensor from 'css-element-queries/src/ResizeSensor';
 import ElementQueries from 'css-element-queries/src/ElementQueries';
-import { frequencyToLetter } from '../../util/PlayerUtil';
+import { frequencyToLetter, getPitchNames } from '../../util/PlayerUtil';
 
 class PitchPipe extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       size: 100,
-      pixelRatio: 1
+      pixelRatio: 1,
+      shaking: false,
+      pitchNum: 0,
+      hover: false
     };
   }
 
   componentDidMount() {
-    // set pixel ratio
     ElementQueries.init();
     this.setPixelRatio(function() {
       this.updateCanvas();
@@ -28,30 +31,53 @@ class PitchPipe extends React.Component {
   }
 
   handlePitchPress() {
-    return () => {
-      if (this.props.player.drone) {
-        this.props.player.isPlaying ? this.stopPitch() : this.startPitch();
-      } else {
-        this.soundPitch();
-      }
-    };
+    if (this.props.player.drone) {
+      this.props.player.isPlaying ? this.stopPitch() : this.startPitch();
+    } else {
+      this.soundPitch();
+    }
   }
 
   soundPitch() {
-    this.props.player.pitch.start();
+    this.startPitch();
     setTimeout(() => {
-      this.props.player.pitch.stop();
+      this.stopPitch();
     }, 2000);
   }
 
   startPitch() {
     this.props.updatePlayer('isPlaying', true);
     this.props.player.pitch.start();
+    this.startPipeShake();
   }
 
   stopPitch() {
     this.props.updatePlayer('isPlaying', false);
     this.props.player.pitch.stop();
+    this.stopPipeShake();
+  }
+
+  startPipeShake() {
+    this.setState({shaking: true}, () => {
+      const step = () => {
+        const options = {
+          xShakeOffset: (Math.random() * 200) - 100,
+          yShakeOffset: (Math.random() * 200) - 100
+        };
+        this.renderCanvas(options);
+        if (this.state.shaking && this.props.player.isPlaying) {
+          window.requestAnimationFrame(step);
+        }
+      };
+
+      window.requestAnimationFrame(step);
+    });
+  }
+
+  stopPipeShake() {
+    this.setState({shaking: false}, () => {
+      this.renderCanvas();
+    });
   }
 
   handleUpdatePitch(change) {
@@ -64,10 +90,10 @@ class PitchPipe extends React.Component {
     const ctx = this.refs.canvas.getContext('2d');
     const dpr = window.devicePixelRatio || 1;
     const bsr = ctx.webkitBackingStorePixelRatio ||
-                ctx.mozBackingStorePixelRatio ||
-                ctx.msBackingStorePixelRatio ||
-                ctx.oBackingStorePixelRatio ||
-                ctx.backingStorePixelRatio || 1;
+    ctx.mozBackingStorePixelRatio ||
+    ctx.msBackingStorePixelRatio ||
+    ctx.oBackingStorePixelRatio ||
+    ctx.backingStorePixelRatio || 1;
     const pixelRatio = dpr / bsr;
     this.setState({pixelRatio: pixelRatio}, cb);
   }
@@ -77,19 +103,27 @@ class PitchPipe extends React.Component {
     const width = this.refs.canvasSection.offsetWidth;
     const size = height <= width ? height * this.state.pixelRatio : width * this.state.pixelRatio;
     this.setState({size: size}, () => {
-      this.renderCanvas(size);
+      this.renderCanvas({size: size});
     });
   }
 
-  renderCanvas(size) {
+  renderCanvas(options = {}) {
     let canvas = this.refs.canvas;
     const ctx = canvas.getContext('2d');
+    const size = options.size || this.state.size;
+    if (!options.size) options.size = this.state.size;
+    if (!options.middle) options.middle = this.state.size / 2;
+    if (!options.slice) options.slice = 0.166667 * Math.PI;
     canvas.width = size;// * this.state.pixelRatio;
     canvas.height = size;// * this.state.pixelRatio;
     canvas.style.width = `${size / this.state.pixelRatio}px`;
     canvas.style.height = `${size / this.state.pixelRatio}px`;
     this.createOuterCircle(ctx, size);
-    this.createInnerCircle(ctx, size);
+    // if (this.state.shaking) this.createInnerCircleBackground(ctx, options);
+    this.createSelector(ctx, options);
+    this.setOuterText(ctx, options);
+    this.createInnerCircle(ctx, options);
+    this.createOuterCircle(ctx, options);
     ctx.stroke();
     this.setCenterText(ctx, size, this.state.pixelRatio);
     ctx.setTransform(this.state.pixelRatio, 0, 0, this.state.pixelRatio, 0, 0);
@@ -102,22 +136,77 @@ class PitchPipe extends React.Component {
     ctx.fill();
   }
 
-  createInnerCircle(ctx, size) {
+  setOuterText(ctx, options) {
+    const fontSize = `${options.size / 14}`;
+    ctx.font = `bold ${fontSize}px Titillium Web`;
+    ctx.fillStyle = 'white';
+    const numRadsPerLetter = 2 * Math.PI / 12;
+    const pitchNames = getPitchNames();
+    ctx.save();
+    ctx.translate(options.middle, options.middle);
+    ctx.textAlign = 'center';
+    ctx.rotate(0);
+
+    for (let i = 0; i < pitchNames.length; i++) {
+      ctx.save();
+      ctx.rotate(i * numRadsPerLetter);
+      ctx.fillText(pitchNames[i], 0, -(options.size / 2.75));
+      ctx.restore();
+    }
+    ctx.restore();
+  }
+
+  createSelector(ctx, options) {
+    const pitchNum = this.state.pitchNum;
+    const start = options.slice / 2 + (options.slice * (pitchNum - 4));
+    const stop = options.slice / 2 + (options.slice * (pitchNum - 3));
+    ctx.save();
     ctx.beginPath();
-    ctx.arc(size / 2, size / 2, size / 4, 0, 2*Math.PI);
-    ctx.fillStyle = 'red';
+    ctx.moveTo(options.middle, options.middle);
+    ctx.arc(options.middle, options.middle, options.middle, start, stop, false);
+    ctx.closePath();
+    ctx.fillStyle = red700;
+    ctx.fill();
+    ctx.restore();
+  }
+
+  createInnerCircle(ctx, options) {
+    ctx.beginPath();
+    if (this.state.shaking) {
+      const xSkew = 0.125 / options.xShakeOffset;
+      const ySkew = 0.125 / options.yShakeOffset;
+      ctx.transform(1, xSkew, ySkew, 1, 0, 0);
+    }
+    this.state.hover ? ctx.fillStyle = red400 : ctx.fillStyle = red700;
+    ctx.arc(options.middle, options.middle, options.middle / 2, 0, 2 * Math.PI);
+    ctx.fill();
+  }
+
+  createInnerCircleBackground(ctx, options) {
+    const size = options.size || this.state.size;
+    const xShakeOffset = options.xShakeOffset || 0;
+    const yShakeOffset = options.yShakeOffset || 0;
+    const x = (size / 2) + xShakeOffset;
+    const y = (size / 2) + yShakeOffset;
+    ctx.beginPath();
+    ctx.arc(x, y, size / 4, 0, 2 * Math.PI);
+    ctx.fillStyle = 'grey';
     ctx.fill();
   }
 
   setCenterText(ctx, size) {
-    console.log(this.props.player.frequency);
     let text;
     if (this.props.player.hertz) {
-      text = Math.round(this.props.player.frequency * 100) / 100;
+      text = String(Math.round(this.props.player.frequency * 100) / 100);
     } else {
-      text = 'A';
+      text = frequencyToLetter(this.props.player.baseFrequency, this.props.player.frequency);
     }
-    const fontSize = `${size / 4}`;
+    let fontSize;
+    if (text.length <= 3) {
+      fontSize = `${size / 4}`;
+    } else {
+      fontSize = `${size / (text.length + 1.5)}`;
+    }
     ctx.fillStyle='white';
     ctx.font=`${fontSize}px Titillium Web`;
     const xOffset = ctx.measureText(text).width / 2.1;
@@ -125,45 +214,80 @@ class PitchPipe extends React.Component {
     ctx.fillText(text, (size / 2) - xOffset, (size / 2) + yOffset);
   }
 
-  setOuterText(ctx, size) {
+  inside(e, widthFactor = 2) {
+    const center = e.target.width / this.state.pixelRatio / 2;
+    const xFromCenter = e.nativeEvent.offsetX - center;
+    const yFromCenter = e.nativeEvent.offsetY - center;
+    const distanceFromCenter = Math.sqrt(Math.pow(xFromCenter, 2) + Math.pow(yFromCenter, 2));
+    const innerWidth = e.target.width / widthFactor / this.state.pixelRatio;
+    return distanceFromCenter < innerWidth;
+  }
 
+  insidePipe(e) {
+    return this.inside(e);
+  }
+
+  insideInnerCircle(e) {
+    return this.inside(e, 4);
+  }
+
+  handleCanvasMouseMove(e) {
+    if (this.insidePipe(e)) {
+      this.refs.canvas.style.cursor = 'pointer';
+      if (this.insideInnerCircle(e)) {
+        this.setState({hover: true}, () => this.renderCanvas());
+      } else {
+        this.setState({hover: false}, () => this.renderCanvas());
+      }
+    } else {
+      this.refs.canvas.style.cursor = 'auto';
+    }
   }
 
   handleCanvasClick(e) {
-    const center = e.target.width / 2;
-    const clickOffsetX = e.nativeEvent.offsetX;
-    const clickOffsetY = e.nativeEvent.offsetY;
-    const xFromCenter = Math.abs(center - clickOffsetX);
-    const yFromCenter = Math.abs(center - clickOffsetY);
-    const innerWidth = e.target.width / 4;
-    if (xFromCenter < innerWidth && yFromCenter < innerWidth) {
-      this.soundPitch();
+    if (this.insideInnerCircle(e)) {
+      this.handlePitchPress();
+    } else if (this.insidePipe(e)) {
+      this.handlePitchSelect(e);
     }
   }
 
-  render() {
-    let pitchDisplayValue;
-    if (this.props.player.hertz) {
-      pitchDisplayValue = Math.round(this.props.player.frequency * 100) / 100;
-    } else {
-      pitchDisplayValue = frequencyToLetter(
-        this.props.player.frequency,
-        this.props.player.baseFrequency
-      );
+  handlePitchSelect(e) {
+    const center = e.target.width / this.state.pixelRatio / 2;
+    const xFromCenter = e.nativeEvent.offsetX - center;
+    const yFromCenter = e.nativeEvent.offsetY - center;
+    const baseAngle = Math.atan(Math.abs(yFromCenter) / Math.abs(xFromCenter));
+    const quadrantOffset = Math.PI / 2;
+    let radians;
+    if (xFromCenter > 0 && yFromCenter <= 0) {
+      radians = quadrantOffset - baseAngle;
+    } else if (xFromCenter > 0 && yFromCenter > 0) {
+      radians = quadrantOffset + baseAngle;
+    } else if (xFromCenter <= 0 && yFromCenter > 0) {
+      radians = Math.PI + (quadrantOffset - baseAngle);
+    } else if (xFromCenter <= 0 && yFromCenter <= 0) {
+      radians = Math.PI + quadrantOffset + baseAngle;
     }
+    const pitchNum = Math.round(radians / (Math.PI / 6)) % 12;
+    if (this.state.pitchNum === pitchNum) return;
+    const change = pitchNum - this.state.pitchNum;
+    this.props.updatePitch(this.props.player.baseFrequency, this.props.player.frequency, change);
+    this.setState({pitchNum: pitchNum}, () => {
+      this.renderCanvas();
+    });
+  }
+
+  render() {
     return (
       <main ref="canvasSection">
         <canvas
           ref="canvas"
           onClick={this.handleCanvasClick.bind(this)}
+          onMouseMove={this.handleCanvasMouseMove.bind(this)}
           width={this.state.size / this.state.pixelRatio}
           height={this.state.size / this.state.pixelRatio} />
       </main>
     );
-    // <button onClick={this.handlePitchPress()}>play</button>
-    // <button onClick={this.handleUpdatePitch(-1)}>down</button>
-    // <p>The current pitch is: {pitchDisplayValue}</p>
-    // <button onClick={this.handleUpdatePitch(1)}>up</button>
   }
 }
 

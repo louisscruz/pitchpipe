@@ -1,5 +1,5 @@
 const PITCH_NAMES = [
-  'A', 'G#', 'G', 'F#', 'F', 'E', 'D#', 'D', 'C#', 'C', 'B', 'Bb'
+  'A', 'B♭', 'B', 'C', 'C♯', 'D', 'D♯', 'E', 'F', 'F♯', 'G', 'G♯'
 ];
 const STEP_SIZE = 1.0594630943592953;
 
@@ -21,6 +21,10 @@ export const frequencyToLetter = (baseFrequency, frequency) => {
   return PITCH_NAMES[index];
 };
 
+export const frequencyToPitchNum = (baseFrequency, frequency) => {
+  return PITCH_NAMES.indexOf(frequencyToLetter(baseFrequency, frequency));
+};
+
 export const adjustToBaseFrequency = (baseFrequency, frequency) => {
   const stepNumber = getStepNumber(baseFrequency, frequency);
   return getFrequency(baseFrequency, stepNumber);
@@ -31,4 +35,8 @@ export const nextPitch = (baseFrequency, frequency, change) => {
   const currentStep = getStepNumber(baseFrequency, frequency);
   const nextStep = currentStep + change;
   return getFrequency(baseFrequency, nextStep);
+};
+
+export const getPitchNames = (basePitch = 'A') => {
+  return PITCH_NAMES;
 };

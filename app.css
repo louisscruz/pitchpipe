@@ -71,6 +71,7 @@ aside, footer {
 
 aside {
   color: white;
+  margin-top: -20px;
 }
 
 aside .options {
@@ -84,7 +85,7 @@ aside .options > button {
 
 aside nav {
   max-height: 0;
-  overflow-x: hidden;
+  overflow-y: hidden;
   display: flex;
   flex-wrap: row-wrap;
   justify-content: space-around;

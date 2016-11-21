@@ -42,11 +42,7 @@ class Header extends React.Component {
   }
 
   baseFrequencyChange() {
-    return e => {
-      // this.set('baseFrequency', e.target.value);
-      // this.props.adjustToBaseFrequency(this.props.player.baseFrequency, this.props.player.frequency);
-      this.props.updateBaseFrequency(e.target.value);
-    };
+    return e => this.props.updateBaseFrequency(e.target.value);
   }
 
   baseFrequencyDown(polarity = 1) {
@@ -106,7 +102,7 @@ class Header extends React.Component {
               <Remove color="white"/>
             </IconButton>
             <TextField
-              floatingLabelText="A ="
+              floatingLabelText="A = "
               value={this.props.player.baseFrequency}
               onChange={this.baseFrequencyChange()}
               inputStyle={styles.input}/>
