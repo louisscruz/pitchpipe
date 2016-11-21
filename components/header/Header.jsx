@@ -42,7 +42,7 @@ class Header extends React.Component {
   }
 
   baseFrequencyChange() {
-    return e => this.props.updateBaseFrequency(e.target.value);
+    return e => this.props.updateBaseFrequency(Number(e.target.value));
   }
 
   baseFrequencyDown(polarity = 1) {
@@ -75,6 +75,9 @@ class Header extends React.Component {
         color: 'white',
         width: '40px',
         textAlign: 'center'
+      },
+      textInput: {
+        borderColor: 'red'
       }
     };
     const openClass = this.state.optionsOpen ? 'open' : '';
@@ -105,6 +108,7 @@ class Header extends React.Component {
               floatingLabelText="A = "
               value={this.props.player.baseFrequency}
               onChange={this.baseFrequencyChange()}
+              underlineFocusStyle={styles.textInput}
               inputStyle={styles.input}/>
             <IconButton
               onMouseDown={this.baseFrequencyDown()}

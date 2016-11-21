@@ -37,6 +37,6 @@ export const nextPitch = (baseFrequency, frequency, change) => {
   return getFrequency(baseFrequency, nextStep);
 };
 
-export const getPitchNames = (basePitch = 'A') => {
+export const getPitchNames = () => {
   return PITCH_NAMES;
 };

@@ -1,6 +1,8 @@
 import React from 'react'; // eslint-disable-line no-unused-vars
-import { convertTemp } from '../../util/WeatherUtil';
 import RaisedButton from 'material-ui/RaisedButton';
+import CircularProgress from 'material-ui/CircularProgress';
+import { red700 } from 'material-ui/styles/colors';
+import { convertTemp } from '../../util/WeatherUtil';
 
 class Footer extends React.Component {
   constructor(props) {
@@ -26,7 +28,7 @@ class Footer extends React.Component {
       );
     } else if (!this.props.weather && this.state.loading) {
       template = (
-        <p>loading weather...</p>
+        <CircularProgress color={red700} />
       );
     } else {
       template = (
