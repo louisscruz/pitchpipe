@@ -69,6 +69,7 @@ class Header extends React.Component {
   render() {
     const styles = {
       checkbox: {
+        marginRight: '4px',
         fill: 'white'
       },
       input: {
@@ -99,27 +100,32 @@ class Header extends React.Component {
               iconStyle={styles.checkbox}
               inputStyle={styles.checkboxLabel}
               onTouchTap={this.toggle('hertz')}/>
-            <IconButton
-              onMouseDown={this.baseFrequencyDown(-1)}
-              onMouseUp={this.baseFrequencyUp(-1)}>
-              <Remove color="white"/>
-            </IconButton>
-            <TextField
-              floatingLabelText="A = "
-              value={this.props.player.baseFrequency}
-              onChange={this.baseFrequencyChange()}
-              underlineFocusStyle={styles.textInput}
-              inputStyle={styles.input}/>
-            <IconButton
-              onMouseDown={this.baseFrequencyDown()}
-              onMouseUp={this.baseFrequencyUp()}>
-              <Add color="white"/>
-            </IconButton>
+            <div style={{display: 'flex', alignItems: 'center'}}>
+              <IconButton
+                onMouseDown={this.baseFrequencyDown(-1)}
+                onMouseUp={this.baseFrequencyUp(-1)}>
+                <Remove color="white"/>
+              </IconButton>
+              <h4>A = {this.props.player.baseFrequency}</h4>
+              <IconButton
+                onMouseDown={this.baseFrequencyDown()}
+                onMouseUp={this.baseFrequencyUp()}>
+                <Add color="white"/>
+              </IconButton>
+
+            </div>
           </nav>
         </aside>
       </header>
     );
   }
 }
+
+// <TextField
+//   floatingLabelText="A = "
+//   value={this.props.player.baseFrequency}
+//   onChange={this.baseFrequencyChange()}
+//   underlineFocusStyle={styles.textInput}
+//   inputStyle={styles.input}/>
 
 export default Header;
