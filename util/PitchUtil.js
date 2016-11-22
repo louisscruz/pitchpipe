@@ -18,9 +18,20 @@ const createGainNode = () => {
 
 class Pitch {
   constructor(freq) {
+    this.iOsFix();
     this.oscillatorNode = createOscillator(freq);
     this.gainNode = createGainNode();
     this.oscillatorNode.connect(this.gainNode);
+  }
+
+  iOsFix(ctx) {
+    window.addEventListener('touchend', function() {
+      const buffer = ctx.createBuffer(1, 1, 22050);
+    	let source = ctx.createBufferSource();
+      source.buffer = buffer;
+      source.connect(ctx.destination);
+      source.noteOn(0);
+    }, false);
   }
 
   start() {
