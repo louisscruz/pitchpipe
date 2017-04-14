@@ -31,7 +31,6 @@ module.exports = {
       { test: /\.css$/, loader: 'style-loader!css-loader' }
     ]
   },
-  devtool: 'eval-source-map',
   resolve: {
     root: __dirname,
     extensions: ['', '.js', '.jsx']

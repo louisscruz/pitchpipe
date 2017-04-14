@@ -30,7 +30,6 @@ module.exports = {
     ]
   },
   devtool: 'source-maps',
-  // devtool: 'eval-source-map',
   resolve: {
     root: __dirname,
     extensions: ['', '.js', '.jsx']

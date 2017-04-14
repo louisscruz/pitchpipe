@@ -18,14 +18,9 @@ const createGainNode = () => {
 
 class Pitch {
   constructor(freq) {
-    this.iOsFix();
     this.oscillatorNode = createOscillator(freq);
     this.gainNode = createGainNode();
     this.oscillatorNode.connect(this.gainNode);
-  }
-
-  iOsFix(ctx) {
-
   }
 
   start() {
